@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ＰＲＩＭＲＯＳＥＸ ＴＥＣＨ</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --blue-1: #1e3a8a;
+  --blue-2: #2563eb;
+  --blue-3: #3b82f6;
+  --blue-light: #60a5fa;
+  --accent: #93c5fd;
+  --glass:rgba(255,255,255,0.04);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;width:100%;overflow-x:hidden;}
+body{
+  font-family:'Poppins',sans-serif;
+  background: #000000;
+  color:#e0f2fe;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  touch-action:pan-y;
+  overscroll-behavior-x:none;
+  padding:20px;
+  min-height:100vh;
+}
+
+.container{
+  position:relative;
+  z-index:2;
+  width:100%;
+  max-width:680px;
+  margin:20px auto;
+  padding:24px;
+  border-radius:20px;
+  background:rgba(15,23,42,0.5);
+  backdrop-filter:blur(12px);
+  box-shadow:0 10px 35px rgba(30,58,138,0.6);
+  text-align:center;
+  transition:all .3s;
+  border:2px solid rgba(59,130,246,0.6);
+  max-height:90vh;
+  overflow-y:auto;
+  overflow-x:hidden;
+}
+.container::before{
+  content:"";
+  position:absolute;
+  width:200%;
+  height:200%;
+  left:-50%;
+  top:-50%;
+  opacity:.04;
+  pointer-events:none;
+  background:conic-gradient(from 0deg,var(--blue-1),var(--blue-2),var(--blue-1));
+  animation:spin 16s linear infinite;
+  border-radius:30%;
+}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+.slider-container{
+  position:relative;
+  width:100%;
+  overflow:hidden;
+  border-radius:14px;
+  border: 2px solid rgba(59,130,246,0.6);
+  aspect-ratio: 16 / 9;
+  background: #000;
+  margin-bottom:18px;
+  box-shadow:0 8px 25px rgba(30,58,138,0.5);
+}
+.slider-wrapper{display:flex;width:100%;height:100%;transition:transform 0.3s ease;}
+.slider-item{width:100%;height:100%;flex:0 0 100%;position:relative;}
+.slider-item img{
+  display:block;width:100%;height:100%;object-fit:cover;
+  filter:saturate(110%) contrast(1.04);user-select:none;
+  -webkit-user-drag:none;border-radius:14px;
+}
+
+h2{
+  font-family:'Orbitron',sans-serif;font-size:17px;color:#fff;
+  margin:16px auto 24px;font-weight:700;letter-spacing:2px;
+  text-shadow:0 6px 18px rgba(59,130,246,0.3);
+  background:linear-gradient(90deg,var(--blue-1),var(--blue-2));
+  padding:14px 20px;border-radius:10px;
+  box-shadow:0 8px 24px rgba(37,99,235,0.3);
+  border:2px solid rgba(59,130,246,0.6);
+  display:flex;align-items:center;justify-content:center;gap:10px;width:300px;
+}
+
+.upload-area{
+  border:3px dashed var(--blue-light);border-radius:16px;
+  padding:40px 20px;background:rgba(59,130,246,0.05);
+  cursor:pointer;transition:all .3s;margin:20px 0;
+}
+.upload-area:hover{border-color:var(--blue-2);background:rgba(59,130,246,0.1);}
+.upload-area.dragover{background:rgba(59,130,246,0.15);border-color:#f97316;}
+.upload-icon{font-size:48px;color:var(--blue-light);margin-bottom:12px;}
+.upload-text{font-size:15px;color:var(--blue-light);}
+#fileInput{display:none;}
+
+.preview{
+  margin:20px 0;border-radius:12px;overflow:hidden;
+  max-height:300px;display:none;
+  box-shadow:0 8px 25px rgba(0,0,0,0.4);
+}
+.preview img{width:100%;height:auto;display:block;}
+
+.btn{
+  display:block;width:100%;margin:8px 0;padding:14px 20px;
+  border:none;border-radius:10px;font-weight:700;font-size:16px;
+  cursor:pointer;background:linear-gradient(90deg,var(--blue-1),var(--blue-2));
+  color:#fff;transition:all 0.12s ease;box-shadow:0 8px 24px rgba(37,99,235,0.3);
+}
+.btn:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(37,99,235,0.4);}
+.btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+
+#menuBtn{position:fixed;top:20px;left:20px;font-size:28px;cursor:pointer;z-index:10;color:var(--blue-light);transition:0.2s;text-shadow:0 4px 12px rgba(59,130,246,0.4);}
+#menuBtn:hover{color:var(--blue-2);transform:scale(1.1);}
+#sideMenu{position:fixed;top:0;left:-260px;width:220px;height:100vh;background:rgba(15,23,42,0.95);backdrop-filter:blur(12px);border-right:2px solid rgba(59,130,246,0.6);padding:20px;display:flex;flex-direction:column;gap:10px;transition:.3s;z-index:9;box-shadow:4px 0 20px rgba(30,58,138,0.6);}
+#sideMenu h3{color:var(--blue-light);font-family:'Orbitron',sans-serif;margin-bottom:10px;text-shadow:0 4px 12px rgba(59,130,246,0.4);}
+#sideMenu button{display:flex;align-items:center;gap:10px;padding:10px;border:none;border-radius:10px;background:rgba(59,130,246,0.2);border:2px solid rgba(59,130,246,0.6);color:white;cursor:pointer;transition:0.2s;font-weight:500;}
+#sideMenu button:hover{background:rgba(59,130,246,0.3);transform:translateX(5px);}
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:8;display:none;}
+
+.profile-icon{position:fixed;top:16px;right:16px;width:40px;height:40px;background:linear-gradient(90deg,var(--blue-1),var(--blue-2));border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10;font-size:18px;color:#fff;transition:0.2s;box-shadow:0 4px 16px rgba(37,99,235,0.4);border:2px solid rgba(59,130,246,0.6);}
+.profile-icon:hover{transform:scale(1.1);box-shadow:0 6px 20px rgba(37,99,235,0.6);}
+
+#loading{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:998;align-items:center;justify-content:center;color:#fff;font-size:18px;flex-direction:column;gap:12px;}
+#loading i{color:var(--blue-light);font-size:48px;}
+
+.toast{position:fixed;right:18px;top:18px;z-index:9999;background:linear-gradient(180deg,rgba(15,23,42,0.95),rgba(30,41,59,0.9));color:#fff;padding:10px 14px;border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,0.6);border:2px solid var(--blue-light);opacity:0;transform:translateY(-8px);transition:opacity .18s,transform .18s;font-weight:600;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+.result-item{
+  background:rgba(15,23,42,0.7);border:2px solid rgba(59,130,246,0.6);
+  border-radius:10px;padding:16px;text-align:center;margin-bottom:16px;transition:0.2s;
+}
+.result-item:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(30,58,138,0.5);}
+.result-item img{width:100%;max-width:300px;border-radius:10px;margin-bottom:12px;box-shadow:0 8px 24px rgba(30,58,138,0.5);}
+.big-download{display:inline-block;margin:8px auto;padding:12px 26px;border-radius:10px;background:linear-gradient(90deg,var(--blue-1),var(--blue-2));color:#fff;font-size:15px;font-weight:700;text-decoration:none;box-shadow:0 8px 24px rgba(37,99,235,0.3);transition:all 0.25s;}
+.big-download:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(37,99,235,0.4);}
+</style>
+</head>
+<body>
+<i class="fa-solid fa-user profile-icon" onclick="window.location.href='profil.html'"></i>
+
+<div id="menuBtn"><i class="fas fa-bars"></i></div>
+<div id="sideMenu">
+  <h3><br><br>TAPOPS</h3>
+  <button onclick="window.location='tools.html'"><i class="fas fa-arrow-left"></i> Kembali</button>
+</div>
+<div id="overlay"></div>
+
+<div class="container">
+  <div class="slider-container" id="sliderContainer">
+    <div class="slider-wrapper" id="sliderWrapper">
+      <div class="slider-item"><img src="https://files.catbox.moe/an2paf.jpeg" alt="HD 1"></div>
+      <div class="slider-item"><img src="https://files.catbox.moe/mlh5ys.jpeg" alt="HD 2"></div>
+      <div class="slider-item"><img src="https://files.catbox.moe/kh5tgf.jpeg" alt="HD 3"></div>
+      <div class="slider-item"><img src="https://files.catbox.moe/91kt4a.jpeg" alt="HD 4"></div>
+      <div class="slider-item"><img src="https://files.catbox.moe/ti3ivu.jpeg" alt="HD 5"></div>
+    </div>
+  </div>
+
+  <h2><i class="fa-solid fa-wand-magic-sparkles"></i> SUPERHD FOTO</h2>
+
+  <div class="upload-area" id="uploadArea">
+    <div class="upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+    <div class="upload-text">Klik atau tarik foto ke sini</div>
+    <input type="file" id="fileInput" accept="image/*">
+  </div>
+
+  <div class="preview" id="preview">
+    <img id="previewImg" src="" alt="Preview">
+  </div>
+
+  <button class="btn" id="processBtn" disabled>
+    <i class="fa-solid fa-magic"></i> Jadikan SuperHD
+  </button>
+
+  <div id="loading">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+    <span id="loadingText">Memproses...</span>
+  </div>
+
+  <div id="result"></div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const toast = document.getElementById("toast");
+function showToast(msg, ms = 2200) {
+  toast.textContent = msg;
+  toast.classList.add("show");
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => toast.classList.remove("show"), ms);
+}
+
+function showLoading(text = "Memproses...") {
+  document.getElementById("loadingText").textContent = text;
+  document.getElementById("loading").style.display = "flex";
+}
+
+function hideLoading() {
+  document.getElementById("loading").style.display = "none";
+}
+
+// Slider
+document.addEventListener('DOMContentLoaded', function () {
+  const sliderWrapper = document.getElementById('sliderWrapper');
+  const sliderContainer = document.getElementById('sliderContainer');
+  const slides = document.querySelectorAll('.slider-item');
+  let currentIndex = 0;
+  let startX = 0;
+  let isDragging = false;
+
+  function updateSlider() {
+    sliderWrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+  }
+
+  function nextSlide() {
+    currentIndex = (currentIndex + 1) % slides.length;
+    updateSlider();
+  }
+
+  function prevSlide() {
+    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+    updateSlider();
+  }
+
+  sliderContainer.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+    isDragging = true;
+  });
+
+  sliderContainer.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+  }, { passive: false });
+
+  sliderContainer.addEventListener('touchend', (e) => {
+    if (!isDragging) return;
+    const endX = e.changedTouches[0].clientX;
+    const diff = startX - endX;
+    if (Math.abs(diff) > 50) diff > 0 ? nextSlide() : prevSlide();
+    isDragging = false;
+  });
+
+  ['mousedown', 'mousemove', 'mouseup', 'mouseleave'].forEach(evt => {
+    sliderContainer.addEventListener(evt, e => {
+      if (evt === 'mousedown') { startX = e.clientX; isDragging = true; e.preventDefault(); }
+      if (!isDragging) return;
+      if (evt === 'mousemove') e.preventDefault();
+      if (evt === 'mouseup') {
+        const endX = e.clientX;
+        const diff = startX - endX;
+        if (Math.abs(diff) > 50) diff > 0 ? nextSlide() : prevSlide();
+        isDragging = false;
+      }
+      if (evt === 'mouseleave') isDragging = false;
+    });
+  });
+});
+
+// Menu
+const menuBtn = document.getElementById('menuBtn');
+const sideMenu = document.getElementById('sideMenu');
+const overlay = document.getElementById('overlay');
+function closeMenu() { sideMenu.style.left = '-260px'; overlay.style.display = 'none'; }
+menuBtn.addEventListener('click', () => { sideMenu.style.left === '0px' ? closeMenu() : (sideMenu.style.left = '0px', overlay.style.display = 'block'); });
+overlay.addEventListener('click', closeMenu);
+
+// Upload & Process
+const uploadArea = document.getElementById('uploadArea');
+const fileInput = document.getElementById('fileInput');
+const preview = document.getElementById('preview');
+const previewImg = document.getElementById('previewImg');
+const processBtn = document.getElementById('processBtn');
+const result = document.getElementById('result');
+let currentFile = null;
+
+uploadArea.addEventListener('click', () => fileInput.click());
+uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+uploadArea.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadArea.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) handleFile(file);
+  else showToast('Hanya gambar!');
+});
+
+fileInput.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (file) handleFile(file);
+});
+
+function handleFile(file) {
+  currentFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    previewImg.src = e.target.result;
+    preview.style.display = 'block';
+    processBtn.disabled = false;
+    result.innerHTML = '';
+  };
+  reader.readAsDataURL(file);
+}
+
+processBtn.addEventListener('click', async () => {
+  if (!currentFile) return;
+  processBtn.disabled = true;
+  showLoading("Mengunggah ke server...");
+  result.innerHTML = '';
+
+  const formData = new FormData();
+  formData.append('image', currentFile);
+
+  try {
+    const res = await fetch('/api/remini', {
+      method: 'POST',
+      body: formData
+    });
+    const data = await res.json();
+
+    if (data.success && data.result) {
+      result.innerHTML = `
+        <div class="result-item">
+          <img src="${data.result}" alt="Hasil HD">
+          <a class="big-download" href="${data.result}" download="SuperHD_Primrosex.jpg">
+            <i class="fas fa-download"></i> Download Hasil HD
+          </a>
+        </div>`;
+      showToast('SUKSES! Gambar sudah SuperHD!');
+    } else {
+      throw new Error(data.message || 'Gagal proses');
+    }
+  } catch (err) {
+    showToast(err.message || 'Server error!');
+  } finally {
+    processBtn.disabled = false;
+    hideLoading();
+  }
+});
+</script>
+</body>
+</html>

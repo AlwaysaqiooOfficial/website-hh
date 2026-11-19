@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ＰＲＩＭＲＯＳＥＸ  ＴＥＣＨ</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500,700&family=Poppins:wght@300,400,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --blue-1: #1e3a8a;
+  --blue-2: #2563eb;
+  --blue-3: #3b82f6;
+  --blue-light: #60a5fa;
+  --accent: #93c5fd;
+  --glass: rgba(255,255,255,0.04);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;width:100%;overflow-x:hidden;}
+body{
+  font-family:'Poppins',sans-serif;
+  background: #000000;
+  color:#e0f2fe;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  touch-action:pan-y;
+  overscroll-behavior-x:none;
+  position:fixed;
+}
+.container{
+position:relative;z-index:2;width:100%;max-width:680px;margin:20px;padding:24px;border-radius:20px;
+background:rgba(15,23,42,0.5);backdrop-filter:blur(12px);
+box-shadow:0 10px 35px rgba(30,58,138,0.6);text-align:center;transition:all .3s;
+border:2px solid rgba(59,130,246,0.6);
+max-height:90vh;overflow-y:auto;overflow-x:hidden;
+}
+.container::before{
+content:"";position:absolute;width:200%;height:200%;left:-50%;top:-50%;opacity:.04;pointer-events:none;
+background:conic-gradient(from 0deg,var(--blue-1),var(--blue-2),var(--blue-1));
+animation:spin 16s linear infinite;border-radius:30%;
+}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.header{margin-bottom:14px;position:relative;}
+.media{
+  display:block;
+  width:100%;
+  border-radius:12px;
+  overflow:hidden;
+  background:transparent;
+  position:relative;
+  touch-action:pan-x;
+}
+.slider-container{
+  position:relative;
+  width:100%;
+  overflow:hidden;
+  border-radius:12px;
+  border: 2px solid rgba(59,130,246,0.6);
+  aspect-ratio: 16 / 9;
+  background: #000;
+}
+.slider-wrapper{
+  display:flex;
+  width:100%;
+  height:100%;
+  transition:transform 0.3s ease;
+}
+.slider-item{
+  width:100%;
+  height:100%;
+  flex: 0 0 100%;
+  position:relative;
+}
+.slider-item img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  filter:saturate(110%) contrast(1.02);
+  user-select:none;
+  -webkit-user-drag:none;
+}
+.icon-title{
+  font-family:'Orbitron',sans-serif;
+  font-size:17px;
+  color:#ffffff;
+  margin:16px auto 24px;
+  font-weight:700;
+  letter-spacing:2px;
+  text-shadow:0 6px 18px rgba(59,130,246,0.3);
+  background:linear-gradient(90deg,var(--blue-1),var(--blue-2));
+  padding:14px 20px;
+  border-radius:10px;
+  box-shadow:0 8px 24px rgba(37,99,235,0.3);
+  border:2px solid rgba(59,130,246,0.6);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  width:300px;
+}
+.input-group{
+  margin:16px 0;
+  text-align:left;
+}
+.input-label{
+  display:block;
+  font-family:'Orbitron',sans-serif;
+  font-size:14px;
+  color:var(--blue-light);
+  margin-bottom:8px;
+  font-weight:600;
+}
+.input-group input,.input-group select{
+  width:100%;
+  padding:12px 14px;
+  border-radius:10px;
+  background:rgba(15,23,42,0.7);
+  border:2px solid rgba(59,130,246,0.6);
+  color:#e0f2fe;
+  font-size:15px;
+  outline:none;
+  transition:box-shadow .14s,border-color .14s;
+}
+.input-group input::placeholder{
+  color:rgba(224,242,254,0.4);
+}
+.input-group input:focus,.input-group select:focus{
+  border-color:var(--blue-2);
+  box-shadow:0 6px 20px rgba(37,99,235,0.15);
+}
+.btn{
+  display:inline-block;
+  padding:14px 20px;
+  margin:12px auto;
+  border-radius:10px;
+  background:linear-gradient(90deg,var(--blue-1),var(--blue-2));
+  color:#fff;
+  font-weight:700;
+  font-size:16px;
+  border:0;
+  cursor:pointer;
+  box-shadow:0 8px 24px rgba(37,99,235,0.3);
+  transition:transform .12s,box-shadow .12s;
+  text-align:center;
+  white-space:nowrap;
+  width:100%;
+}
+.btn:hover{
+  transform:translateY(-3px);
+  box-shadow:0 14px 40px rgba(37,99,235,0.4);
+}
+.btn:disabled{
+  opacity:0.5;
+  cursor:not-allowed;
+  transform:none;
+}
+.toast{
+  position:fixed;
+  right:18px;
+  top:18px;
+  z-index:9999;
+  background:linear-gradient(180deg,rgba(15,23,42,0.95),rgba(30,41,59,0.9));
+  color:#fff;
+  padding:10px 14px;
+  border-radius:8px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.6);
+  border:2px solid var(--blue-light);
+  opacity:0;
+  transform:translateY(-8px);
+  transition:opacity .18s,transform .18s;
+  font-weight:600;
+}
+.toast.show{
+  opacity:1;
+  transform:translateY(0);
+}
+#menuBtn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  font-size:28px;
+  cursor:pointer;
+  z-index:10;
+  color:var(--blue-light);
+  text-shadow:0 4px 12px rgba(59,130,246,0.4);
+  transition:0.2s;
+}
+#menuBtn:hover{
+  color:var(--blue-2);
+  transform:scale(1.1);
+}
+#sideMenu {
+  position: fixed;
+  top: 0;
+  left: -260px;
+  width: 220px;
+  height: 100vh;
+  background: rgba(15,23,42,0.95);
+  backdrop-filter:blur(12px);
+  border-right:2px solid rgba(59,130,246,0.6);
+  padding: 20px;
+  display:flex;
+  flex-direction:column;
+  gap: 10px;
+  transition: 0.3s;
+  z-index:9;
+  box-shadow:4px 0 20px rgba(30,58,138,0.6);
+}
+#sideMenu h3{
+  font-family:'Orbitron',sans-serif;
+  color:var(--blue-light);
+  margin-bottom:10px;
+  text-shadow:0 4px 12px rgba(59,130,246,0.4);
+}
+#sideMenu button {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  background:rgba(59,130,246,0.2);
+  border:2px solid rgba(59,130,246,0.6);
+  color:white;
+  cursor:pointer;
+  transition:0.2s;
+  font-weight:500;
+}
+#sideMenu button:hover { 
+  background:rgba(59,130,246,0.3); 
+  transform:translateX(5px);
+}
+#overlay {
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background: rgba(0,0,0,0.6);
+  z-index:8;
+  display:none;
+}
+.profile-icon{
+  position:fixed;
+  top:16px;
+  right:16px;
+  width:40px;
+  height:40px;
+  background:linear-gradient(90deg,var(--blue-1),var(--blue-2));
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:10;
+  font-size:18px;
+  color:#fff;
+  transition:0.2s;
+  box-shadow:0 4px 16px rgba(37,99,235,0.4);
+  border:2px solid rgba(59,130,246,0.6);
+}
+.profile-icon:hover{
+  transform:scale(1.1);
+  box-shadow:0 6px 20px rgba(37,99,235,0.6);
+}
+
+@media(max-width:420px){
+  .container{padding:18px;margin:15px;}
+  .icon-title{font-size:17px;padding:12px 16px;}
+}
+</style>
+</head>
+<body>
+<i class="fa-solid fa-user profile-icon" onclick="window.location.href='profil.html'"></i>
+<div id="menuBtn"><i class="fas fa-bars"></i></div>
+<div id="sideMenu">
+  <h3><br><br>TAPOPS</h3>
+  <button onclick="window.location='dashboard.html'"><i class="fas fa-arrow-left"></i> Kembali</button>
+</div>
+<div id="overlay"></div>
+
+<div class="container dashboard" id="dashboard">
+  <div class="header">
+    <div class="media">
+      <div class="slider-container" id="sliderContainer">
+        <div class="slider-wrapper" id="sliderWrapper">
+          <div class="slider-item"><img src="https://files.catbox.moe/an2paf.jpeg" alt="Image 1"></div>
+          <div class="slider-item"><img src="https://files.catbox.moe/mlh5ys.jpeg" alt="Image 2"></div>
+          <div class="slider-item"><img src="https://files.catbox.moe/kh5tgf.jpeg" alt="Image 3"></div>
+          <div class="slider-item"><img src="https://files.catbox.moe/91kt4a.jpeg" alt="Image 4"></div>
+          <div class="slider-item"><img src="https://files.catbox.moe/ti3ivu.jpeg" alt="Image 5"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <h2 class="icon-title"><i class="fa-solid fa-bolt-lightning"></i>VOID DDOS</h2>
+
+  <div class="input-group">
+    <label class="input-label"><i class="fa-solid fa-link"></i> Link Target</label>
+    <input type="text" id="linkInput" placeholder="Masukkan Link Target">
+  </div>
+  <div class="input-group">
+    <label class="input-label"><i class="fa-solid fa-gear"></i> Metode</label>
+    <select id="methodSelect">
+      <option value="">Pilih Metode</option>
+      <option value="one">Injection</option>
+      <option value="two">Power Client</option>
+      <option value="there">Flood Panel</option>
+      <option value="four">Ryodan</option>
+      <option value="five">Protocol</option>
+      <option value="six">Pidoras</option>
+    </select>
+  </div>
+  <div class="input-group">
+    <label class="input-label"><i class="fa-solid fa-clock"></i> Time</label>
+    <input type="number" id="timeInput" placeholder="Durasi (detik)">
+  </div>
+<button class="btn" id="btnRun"><i class="fa-solid fa-paper-plane"></i> Send Attack</button>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+function showToast(msg, ms = 2200) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), ms);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  // Image Slider
+  const sliderWrapper = document.getElementById('sliderWrapper');
+  const sliderContainer = document.getElementById('sliderContainer');
+  const slides = document.querySelectorAll('.slider-item');
+  let currentIndex = 0;
+  let startX = 0;
+  let isDragging = false;
+
+  function updateSlider() {
+    sliderWrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+  }
+
+  function goToSlide(index) {
+    currentIndex = Math.max(0, Math.min(index, slides.length - 1));
+    updateSlider();
+  }
+
+  function nextSlide() {
+    currentIndex = (currentIndex + 1) % slides.length;
+    updateSlider();
+  }
+
+  function prevSlide() {
+    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+    updateSlider();
+  }
+
+  sliderContainer.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+    isDragging = true;
+  });
+
+  sliderContainer.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+  }, { passive: false });
+
+  sliderContainer.addEventListener('touchend', (e) => {
+    if (!isDragging) return;
+    const endX = e.changedTouches[0].clientX;
+    const diff = startX - endX;
+    
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        nextSlide();
+      } else {
+        prevSlide();
+      }
+    }
+    isDragging = false;
+  });
+
+  sliderContainer.addEventListener('mousedown', (e) => {
+    startX = e.clientX;
+    isDragging = true;
+    e.preventDefault();
+  });
+
+  sliderContainer.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+  });
+
+  sliderContainer.addEventListener('mouseup', (e) => {
+    if (!isDragging) return;
+    const endX = e.clientX;
+    const diff = startX - endX;
+    
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        nextSlide();
+      } else {
+        prevSlide();
+      }
+    }
+    isDragging = false;
+  });
+
+  sliderContainer.addEventListener('mouseleave', () => {
+    isDragging = false;
+  });
+
+  // Menu functionality
+  const menuBtn = document.getElementById('menuBtn');
+  const sideMenu = document.getElementById('sideMenu');
+  const overlay = document.getElementById('overlay');
+
+  function closeMenu() {
+    sideMenu.style.left = '-260px';
+    overlay.style.display = 'none';
+  }
+
+  menuBtn.addEventListener('click', () => {
+    if (sideMenu.style.left === '0px') {
+      closeMenu();
+    } else {
+      sideMenu.style.left = '0px';
+      overlay.style.display = 'block';
+    }
+  });
+
+  overlay.addEventListener('click', closeMenu);
+
+  const btnRun = document.getElementById('btnRun');
+
+  btnRun.addEventListener('click', async () => {
+  const link = document.getElementById('linkInput').value.trim(),
+    method = document.getElementById('methodSelect').value,
+    time = document.getElementById('timeInput').value.trim();
+
+  if (!link || !method || !time) {
+    showToast('Complete All Data!');
+    return;
+  }
+
+  const username = localStorage.getItem('username');
+  if (!username) {
+    showToast('❌ Kamu Belum Login!');
+    return;
+  }
+
+  btnRun.disabled = true;
+  btnRun.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+  showToast('Sending Attack...', 2000);
+  
+  let timeoutReached = false;
+  const timeout = setTimeout(() => {
+    timeoutReached = true;
+    showToast('DDoS Attack Successfully Executed!', 2500);
+    btnRun.disabled = false;
+    btnRun.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send Attack';
+  }, 5000);
+  
+  try {
+    const res = await fetch(`/api/attack`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }, 
+      body: JSON.stringify({ 
+        target: link, 
+        method, 
+        time,
+        username: username
+      })
+    });
+
+    if (timeoutReached) return;
+
+    clearTimeout(timeout);
+    const data = await res.json();
+    if (data.success) {
+      showToast('DDoS Attack Successfully Executed!', 2500);
+    } else {
+      showToast('DDoS Attack Failed To Execute', 2500);
+    }
+  } catch (err) {
+    if (!timeoutReached) {
+      clearTimeout(timeout);
+      showToast('Server Not Responding', 2500);
+    }
+  } finally {
+    btnRun.disabled = false;
+    btnRun.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send Attack';
+  }
+});
+});
+</script>
+</body>
+</html>
