@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Senders - CORE</title>
+    
+    <!-- Load Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- VARIABLES (TEMA BIRU) --- */
+        :root {
+            /* Background */
+            --bg-dark: #000000; /* Background hitam polos */
+            
+            /* Warna Biru Dominan */
+            --accent-blue: #3b82f6;
+            --accent-blue-light: #60a5fa;
+            --accent-blue-dark: #1d4ed8;
+            --accent-blue-glow: rgba(59, 130, 246, 0.7);
+            
+            /* Card & UI */
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --card-border: rgba(59, 130, 246, 0.2);
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            
+            /* Status Colors */
+            --status-connected: #10b981;
+            --status-connecting: #f59e0b;
+            --status-waiting: #8b5cf6;
+            --status-error: #ef4444;
+            
+            /* Text Colors */
+            --text-white: #ffffff;
+            --text-gray: #d1d5db;
+            --text-light: #f3f4f6;
+            
+            /* Fonts */
+            --font-title: 'Orbitron', sans-serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            outline: none; 
+        }
+        
+        body {
+            background-color: var(--bg-dark); /* Background hitam polos */
+            color: var(--text-white);
+            font-family: var(--font-body);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            display: flex; 
+            align-items: center; 
+            gap: 16px; 
+            padding: 20px 25px; 
+            padding-top: 40px; 
+            background: rgba(0, 0, 0, 0.8);
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(10px);
+            z-index: 50;
+        }
+        
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0; 
+            left: 25px; 
+            right: 25px; 
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                var(--accent-blue) 50%, 
+                transparent 100%);
+        }
+
+        .back-btn {
+            color: var(--accent-blue-light);
+            background: rgba(59, 130, 246, 0.1);
+            width: 35px; 
+            height: 35px;
+            border-radius: 10px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            border: 1px solid var(--card-border);
+            transition: 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .back-btn:hover {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            transform: translateX(-3px);
+        }
+
+        .brand-title { 
+            font-family: var(--font-title);
+            font-size: 16px; 
+            font-weight: 600; 
+            letter-spacing: 1px; 
+            color: var(--text-white);
+            background: linear-gradient(90deg, var(--accent-blue-light), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- MAIN CONTENT --- */
+        .container {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* --- CARDS --- */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-title {
+            font-family: var(--font-title);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-white);
+            letter-spacing: 0.5px;
+        }
+
+        .card-icon { 
+            color: var(--accent-blue); 
+            font-size: 16px; 
+        }
+
+        /* --- GUIDE BANNER --- */
+        .guide-banner {
+            background: linear-gradient(135deg, 
+                rgba(59, 130, 246, 0.15), 
+                rgba(29, 78, 216, 0.15));
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .guide-banner:hover {
+            background: linear-gradient(135deg, 
+                rgba(59, 130, 246, 0.25), 
+                rgba(29, 78, 216, 0.25));
+            transform: translateY(-2px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .guide-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .guide-icon {
+            font-size: 20px;
+            color: var(--accent-blue-light);
+        }
+
+        .guide-text h4 {
+            color: var(--text-white);
+            font-family: var(--font-title);
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .guide-text p {
+            color: var(--text-gray);
+            font-size: 11px;
+        }
+        
+        .guide-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--accent-blue);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            font-family: var(--font-title);
+        }
+
+        /* --- FORM ELEMENTS --- */
+        .input-group { 
+            margin-bottom: 15px; 
+        }
+
+        .input-label {
+            font-family: var(--font-body);
+            font-size: 11px;
+            color: var(--text-gray);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input-field {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 12px;
+            color: var(--text-white);
+            font-family: var(--font-body);
+            font-size: 13px;
+            transition: 0.3s;
+        }
+
+        .input-field:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        /* --- DROPDOWN --- */
+        .dropdown { 
+            position: relative; 
+            width: 100%; 
+        }
+
+        .dropdown-trigger {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 12px;
+            color: var(--text-white);
+            cursor: pointer;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            transition: 0.3s;
+        }
+        
+        .dropdown-trigger:hover { 
+            border-color: var(--accent-blue); 
+        }
+        
+        .dropdown-menu {
+            position: absolute; 
+            top: 110%; 
+            left: 0; 
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid var(--accent-blue);
+            border-radius: 10px;
+            max-height: 250px; 
+            overflow-y: auto;
+            opacity: 0; 
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .dropdown.active .dropdown-menu { 
+            opacity: 1; 
+            visibility: visible; 
+            transform: translateY(0); 
+        }
+
+        .dropdown-item {
+            padding: 10px 12px;
+            display: flex; 
+            align-items: center; 
+            gap: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: 0.2s; 
+            color: var(--text-gray); 
+            font-size: 12px;
+        }
+
+        .dropdown-item:hover { 
+            background: rgba(59, 130, 246, 0.1); 
+            color: var(--text-white); 
+        }
+        .dropdown-item.selected { 
+            background: rgba(59, 130, 246, 0.2); 
+            color: var(--accent-blue); 
+            font-weight: 500; 
+        }
+
+        /* --- BUTTONS --- */
+        .btn-primary {
+            width: 100%; 
+            padding: 14px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-dark));
+            border: none; 
+            border-radius: 10px;
+            color: white;
+            font-family: var(--font-title); 
+            font-weight: 600; 
+            font-size: 13px; 
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 8px;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        /* --- SENDER LIST --- */
+        .senders-list-container {
+            margin-top: 15px;
+        }
+
+        .sender-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            transition: 0.3s;
+        }
+        
+        .sender-item:hover { 
+            border-color: var(--accent-blue); 
+            transform: translateX(5px); 
+        }
+
+        .sender-info { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+        }
+
+        .sender-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .sender-status.connected { 
+            background: var(--status-connected); 
+            box-shadow: 0 0 6px var(--status-connected); 
+        }
+        .sender-status.connecting { 
+            background: var(--status-connecting); 
+            box-shadow: 0 0 6px var(--status-connecting); 
+            animation: pulse 2s infinite;
+        }
+        .sender-status.waiting_pairing { 
+            background: var(--status-waiting); 
+            box-shadow: 0 0 6px var(--status-waiting); 
+            animation: pulse 1.5s infinite;
+        }
+        .sender-status.disconnected, 
+        .sender-status.error { 
+            background: var(--status-error); 
+            box-shadow: 0 0 6px var(--status-error); 
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .sender-number { 
+            font-size: 13px; 
+            color: var(--text-white); 
+            font-family: var(--font-title);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-delete {
+            width: 30px; 
+            height: 30px;
+            background: rgba(239, 68, 68, 0.1); 
+            color: var(--status-error);
+            border-radius: 6px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            cursor: pointer; 
+            transition: 0.2s;
+        }
+        .btn-delete:hover { 
+            background: var(--status-error); 
+            color: white; 
+        }
+
+        /* --- MODAL STYLES --- */
+        .modal-overlay {
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85); 
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            opacity: 0; 
+            visibility: hidden; 
+            transition: 0.3s;
+            padding: 20px;
+        }
+        .modal-overlay.active { 
+            opacity: 1; 
+            visibility: visible; 
+        }
+        
+        .modal-card {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border-radius: 16px;
+            padding: 25px;
+            width: 100%; 
+            max-width: 500px;
+            text-align: center;
+            transform: scale(0.9); 
+            transition: 0.3s ease;
+            backdrop-filter: blur(20px);
+        }
+        .modal-overlay.active .modal-card { 
+            transform: scale(1); 
+        }
+
+        /* Guide Modal */
+        .guide-modal .modal-card {
+            max-width: 600px;
+            text-align: left;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-icon {
+            font-size: 24px;
+            color: var(--accent-blue);
+        }
+
+        .modal-title {
+            font-family: var(--font-title);
+            font-size: 16px;
+            color: var(--text-white);
+            letter-spacing: 0.5px;
+        }
+
+        .modal-content {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .guide-step {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .step-number {
+            display: inline-block;
+            background: var(--accent-blue);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-weight: 600;
+            margin-right: 8px;
+            font-family: var(--font-title);
+            font-size: 11px;
+        }
+
+        .step-title {
+            display: inline-block;
+            color: var(--text-white);
+            font-family: var(--font-title);
+            font-weight: 600;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .step-description {
+            color: var(--text-gray);
+            font-size: 12px;
+            line-height: 1.5;
+            margin-left: 32px;
+        }
+
+        .guide-note {
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 15px;
+            border: 1px solid var(--card-border);
+        }
+
+        .note-title {
+            color: var(--accent-blue-light);
+            font-family: var(--font-title);
+            font-size: 12px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .note-text {
+            color: var(--text-gray);
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .btn-close {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-dark));
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-family: var(--font-title);
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .btn-close:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Pairing Modal */
+        .code-display {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--accent-blue);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: var(--font-title);
+            font-size: 24px;
+            color: var(--text-white);
+            letter-spacing: 3px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modal-instructions {
+            text-align: left;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .modal-instructions h4 {
+            color: var(--accent-blue);
+            margin-bottom: 8px;
+            font-family: var(--font-title);
+            font-size: 12px;
+        }
+
+        .modal-instructions ol {
+            color: var(--text-gray);
+            padding-left: 18px;
+            font-size: 11px;
+        }
+
+        .modal-instructions li {
+            margin-bottom: 6px;
+        }
+
+        .modal-warning {
+            color: var(--status-connecting);
+            font-size: 11px;
+            margin: 12px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-copy {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--text-white);
+            border: 1px solid var(--card-border);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-family: var(--font-title);
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-copy:hover {
+            background: var(--accent-blue);
+        }
+
+        .btn-copy.copied {
+            background: var(--status-connected);
+            color: white;
+        }
+
+        /* Delete Modal */
+        .modal-card.delete-theme {
+            border-color: var(--status-error);
+        }
+
+        .icon-box-danger {
+            width: 50px; 
+            height: 50px;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--status-error);
+            border-radius: 50%;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 20px;
+            margin: 0 auto 12px auto;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .modal-actions {
+            display: flex; 
+            gap: 10px; 
+            margin-top: 20px;
+        }
+
+        .btn-cancel {
+            flex: 1; 
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-white);
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: var(--font-title);
+            font-weight: 600;
+            font-size: 12px;
+            transition: 0.3s;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-delete-confirm {
+            flex: 1; 
+            padding: 10px;
+            background: linear-gradient(135deg, #ef4444, #b91c1c);
+            border: none;
+            color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: var(--font-title);
+            font-weight: 600;
+            font-size: 12px;
+            transition: 0.3s;
+        }
+
+        .btn-delete-confirm:hover {
+            transform: translateY(-2px);
+        }
+
+        /* --- NOTIFICATION TOAST --- */
+        .notification-toast {
+            position: fixed; 
+            top: -60px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.95);
+            color: var(--accent-blue);
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-family: var(--font-title);
+            font-weight: 600;
+            font-size: 12px;
+            z-index: 2000;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            transition: top 0.4s ease;
+            display: flex; 
+            align-items: center; 
+            gap: 8px;
+            white-space: nowrap;
+            backdrop-filter: blur(10px);
+        }
+        .notification-toast.show { 
+            top: 20px; 
+        }
+
+        .notification-toast.success {
+            color: var(--status-connected);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .notification-toast.error {
+            color: var(--status-error);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .notification-toast.info {
+            color: var(--accent-blue);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        /* --- LOADING & NO DATA --- */
+        .loading-text, .no-senders {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-gray);
+            font-size: 12px;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+            
+            .code-display {
+                font-size: 20px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .modal-actions {
+                flex-direction: column;
+            }
+            
+            .guide-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+            }
+            
+            .guide-modal .modal-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="/dashboard" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        <div class="brand-title">MY SENDERS</div>
+    </header>
+
+    <div class="container">
+        
+        <!-- CARD 1: ADD SENDER -->
+        <div class="card">
+            <div class="card-header">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#3b82f6">
+                    <path d="M207.54-287.54q-56.23-58.08-84.19-128T95.39-560q0-74.54 27.96-144.46t84.19-128l37.23 37.23Q196-746.08 172-684.54 148-623 148-560q0 63 24 124.54 24 61.54 72.77 110.69l-37.23 37.23ZM302-382q-36.69-37.46-55.65-83.77-18.96-46.31-18.96-94.23t18.96-94.23Q265.31-700.54 302-738l37.23 37.23q-29.61 27.77-44.42 64.96Q280-598.62 280-560q0 36.77 14.62 73.77 14.61 37 44.61 67L302-382Zm-.46 268.92 125.77-377.31q-16.77-12.07-26.27-30.49-9.5-18.43-9.5-39.12 0-37 25.73-62.73Q443-648.46 480-648.46t62.73 25.73Q568.46-597 568.46-560q0 20.69-9.11 38.73-9.12 18.04-26.66 30.88l125.77 377.31h-60.77l-26-80H388.92l-26.23 80h-61.15Zm107.23-140h142.46L480-466.93l-71.23 213.85ZM658-382l-37.23-37.23q29.61-27.77 44.42-64.96Q680-521.38 680-560q0-35.62-14.81-73t-44.42-67.77L658-738q36.69 37.46 54.73 84.15 18.04 46.7 19.88 94.23 0 47.93-18.76 94.04Q695.08-419.46 658-382Zm94.46 94.46-37.23-37.23Q764-373.92 788-435.46 812-497 812-560q0-63-24-124.54-24-61.54-72.77-110.69l37.23-37.23q55.85 58.08 84 128T864.61-560q0 74.54-26.84 144.46-26.85 69.92-85.31 128Z"/>
+                </svg>
+                <span class="card-title">NEW CONNECTION</span>
+            </div>
+
+            <!-- Guide Banner -->
+            <div class="guide-banner" onclick="openGuideModal()">
+                <span class="guide-badge">GUIDE</span>
+                <div class="guide-content">
+                    <div class="guide-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="guide-text">
+                        <h4>HOW TO CONNECT</h4>
+                        <p>Step-by-step guide to link your WhatsApp device</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Input -->
+            <div class="add-sender-form">
+                <div class="input-group">
+                    <label class="input-label">COUNTRY CODE</label>
+                    <div class="dropdown" id="countryDropdown">
+                        <input type="hidden" id="selectedCountryCode" value="62">
+                        <div class="dropdown-trigger">
+                            <span id="triggerText">🇮🇩 +62 Indonesia</span>
+                            <i class="fas fa-chevron-down" style="font-size: 10px; color: var(--accent-blue);"></i>
+                        </div>
+                        <div class="dropdown-menu" id="countryMenu">
+                            <!-- Options will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">PHONE NUMBER</label>
+                    <input type="text" id="newSenderNumber" class="input-field" 
+                           placeholder="Contoh: 81234567890" autocomplete="off">
+                </div>
+
+                <button type="button" id="addSenderBtn" class="btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#FFFFFF">
+                        <path d="M757.31-100.77q-60.23 0-102.81-42.58-42.58-42.57-42.58-102.8v-180q0-36.83 25.43-62.27 25.43-25.43 62.27-25.43 36.83 0 62.26 25.43 25.43 25.44 25.43 62.27v180h-60v-180q0-11.47-8.12-19.58-8.11-8.12-19.57-8.12-11.47 0-19.58 8.12-8.12 8.11-8.12 19.58v180q0 35.22 25.1 60.3t60.35 25.08q35.25 0 60.28-25.08 25.04-25.08 25.04-60.3v-160h60v160q0 60.23-42.58 102.8-42.57 42.58-102.8 42.58ZM129.62-260q-29.83 0-51.07-21.24-21.24-21.24-21.24-51.07v-455.38q0-29.83 21.24-51.07Q99.79-860 129.62-860H745q29.83 0 51.07 21.24 21.24 21.24 21.24 51.07v235.38H699.62q-52.91 0-90.3 36.77-37.4 36.77-37.4 89.39V-260h-442.3Zm307.69-277.69 320-204.62-6.16-57.69-313.84 200-313.85-200-6.15 57.69 320 204.62Z"/>
+                    </svg> GET CODE
+                </button>
+            </div>
+        </div>
+
+        <!-- CARD 2: LIST SENDERS -->
+        <div class="card">
+            <div class="card-header">
+                <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill="#10b981">
+                    <path d="M720.77-180v-80h-80v-60h80v-80h60v80h80v60h-80v80h-60ZM118.23-536l-70.77-70.77q87.77-83.61 199.43-128.42Q358.54-780 480-780q121.46 0 233.11 44.81 111.66 44.81 199.43 128.42L841.77-536q-73.46-69.69-166.97-106.85Q581.29-680 479.99-680t-194.8 37.15Q191.69-605.69 118.23-536ZM480-180q-29.15 0-49.58-20.42Q410-220.85 410-250t20.42-49.58Q450.85-320 480-320t49.58 20.42Q550-279.15 550-250t-20.42 49.58Q509.15-180 480-180ZM283-372l-70.15-70.15q54.77-51.93 123.53-79.7 68.77-27.76 143.62-27.76 60.22 0 116.46 17.92 56.23 17.92 104.85 51.77-28.7 6.15-53.62 21.46-24.92 15.31-44.08 36.69-28.78-13.44-59.96-20.64-31.19-7.21-63.65-7.21-55.77 0-106.15 20-50.39 20-90.85 57.62Z"/>
+                </svg>
+                <span class="card-title">ACTIVE SENDERS</span>
+            </div>
+            
+            <div class="senders-list-container">
+                <div id="sendersList" class="senders-list">
+                    <div class="loading-text"><i class="fas fa-spinner fa-spin"></i> Loading senders...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: GUIDE -->
+    <div class="modal-overlay guide-modal" id="guideModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="modal-title">CONNECTION GUIDE</div>
+            </div>
+            
+            <div class="modal-content">
+                <div class="guide-step">
+                    <span class="step-number">1</span>
+                    <span class="step-title">SELECT COUNTRY CODE</span>
+                    <p class="step-description">
+                        Choose <strong>country code</strong> from dropdown
+                    </p>
+                </div>
+                
+                <div class="guide-step">
+                    <span class="step-number">2</span>
+                    <span class="step-title">ENTER WHATSAPP NUMBER</span>
+                    <p class="step-description">
+                        Enter <strong>WhatsApp number</strong> without country code
+                    </p>
+                </div>
+                
+                <div class="guide-step">
+                    <span class="step-number">3</span>
+                    <span class="step-title">CLICK "GET CODE"</span>
+                    <p class="step-description">
+                        Click <strong>"GET CODE"</strong> button to generate pairing code
+                    </p>
+                </div>
+                
+                <div class="guide-step">
+                    <span class="step-number">4</span>
+                    <span class="step-title">OPEN WHATSAPP ON PHONE</span>
+                    <p class="step-description">
+                        Open <strong>WhatsApp</strong> on your smartphone
+                    </p>
+                </div>
+                
+                <div class="guide-step">
+                    <span class="step-number">5</span>
+                    <span class="step-title">GO TO LINKED DEVICES</span>
+                    <p class="step-description">
+                        Navigate to <strong>Linked Devices</strong> in WhatsApp settings
+                    </p>
+                </div>
+                
+                <div class="guide-step">
+                    <span class="step-number">6</span>
+                    <span class="step-title">LINK DEVICE</span>
+                    <p class="step-description">
+                        Select <strong>Link a Device</strong> and enter the pairing code
+                    </p>
+                </div>
+                
+                <div class="guide-step">
+                    <span class="step-number">7</span>
+                    <span class="step-title">CONFIRM CONNECTION</span>
+                    <p class="step-description">
+                        Status will change to <strong>Connected</strong> when successful
+                    </p>
+                </div>
+                
+                <div class="guide-note">
+                    <div class="note-title">
+                        <i class="fas fa-lightbulb"></i> IMPORTANT TIPS
+                    </div>
+                    <p class="note-text">
+                        • Ensure WhatsApp is active and connected to internet<br>
+                        • Pairing code expires in 30 seconds<br>
+                        • Do not share pairing code with anyone<br>
+                        • One number can only connect to one sender<br>
+                        • Delete sender when not in use for security
+                    </p>
+                </div>
+            </div>
+            
+            <button class="btn-close" onclick="closeGuideModal()">
+                <i class="fas fa-check-circle"></i> UNDERSTOOD
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL: PAIRING CODE -->
+    <div class="modal-overlay" id="pairingModal">
+        <div class="modal-card">
+            <div style="color: var(--accent-blue); font-size: 32px; margin-bottom: 12px;">
+                <i class="fas fa-qrcode"></i>
+            </div>
+            <h3 style="color: var(--text-white); font-family: var(--font-title); font-size: 14px; letter-spacing: 0.5px;">
+                WHATSAPP PAIRING CODE
+            </h3>
+            
+            <div class="code-display">
+                <div class="code-text" id="pairingCodeValue">--- ---</div>
+                <button class="btn-copy" id="copyCodeBtn">
+                    <i class="fas fa-copy"></i> COPY
+                </button>
+            </div>
+            
+            <div class="modal-instructions">
+                <h4>Quick Steps:</h4>
+                <ol>
+                    <li>Open <b>WhatsApp</b> > <b>Linked Devices</b></li>
+                    <li>Select <b>Link a Device</b></li>
+                    <li>Enter code: <strong id="displayCode"></strong></li>
+                    <li>Code expires in <b>30 seconds!</b></li>
+                </ol>
+            </div>
+            
+            <div class="modal-warning">
+                <i class="fas fa-shield-alt"></i>
+                DO NOT share this code with anyone!
+            </div>
+            
+            <button class="btn-close" id="closeModalBtn">
+                <i class="fas fa-times-circle"></i> UNDERSTOOD
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL: DELETE CONFIRMATION -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-card delete-theme">
+            <div class="icon-box-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 style="color: var(--text-white); font-family: var(--font-title); font-size: 16px; letter-spacing: 0.5px;">
+                DELETE SENDER?
+            </h3>
+            <p style="color: var(--text-gray); font-size: 12px; margin-top: 8px; line-height: 1.5;" id="deleteMessage">
+                Are you sure you want to delete this sender?
+            </p>
+            
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeDeleteModal()">CANCEL</button>
+                <button class="btn-delete-confirm" id="btnConfirmDelete">DELETE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION TOAST -->
+    <div id="notifToast" class="notification-toast">
+        <i class="fas fa-info-circle"></i> <span id="notifText">Message</span>
+    </div>
+
+    <script>
+    // Global variables  
+    let currentPairingCode = null;  
+    let numberToDelete = null;  
+    let eventSource = null;  
+
+    // Function untuk menampilkan notifikasi  
+    function showNotification(message, type = 'info') {  
+        const toast = document.getElementById('notifToast');  
+        const text = document.getElementById('notifText');  
+          
+        text.textContent = message;  
+          
+        // Reset classes  
+        toast.className = 'notification-toast';  
+        toast.classList.add(type);  
+          
+        // Show toast  
+        toast.classList.add('show');  
+          
+        // Auto hide setelah 5 detik  
+        setTimeout(() => {  
+            toast.classList.remove('show');  
+        }, 5000);  
+    }  
+
+    // Initialize country dropdown  
+    function initCountryDropdown() {
+        const countries = [
+            { value: '93', flag: '🇦🇫', name: 'Afghanistan' },
+            { value: '244', flag: '🇦🇴', name: 'Angola' },
+            { value: '61', flag: '🇦🇺', name: 'Australia' },
+            { value: '973', flag: '🇧🇭', name: 'Bahrain' },
+            { value: '880', flag: '🇧🇩', name: 'Bangladesh' },
+            { value: '673', flag: '🇧🇳', name: 'Brunei Darussalam' },
+            { value: '55', flag: '🇧🇷', name: 'Brazil' },
+            { value: '237', flag: '🇨🇲', name: 'Cameroon' },
+            { value: '86', flag: '🇨🇳', name: 'China' },
+            { value: '269', flag: '🇰🇲', name: 'Comoros' },
+            { value: '225', flag: '🇨🇮', name: "Côte d'Ivoire" },
+            { value: '33', flag: '🇫🇷', name: 'France' },
+            { value: '49', flag: '🇩🇪', name: 'Germany' },
+            { value: '91', flag: '🇮🇳', name: 'India' },
+            { value: '62', flag: '🇮🇩', name: 'Indonesia' },
+            { value: '98', flag: '🇮🇷', name: 'Iran' },
+            { value: '972', flag: '🇮🇱', name: 'Israel' },
+            { value: '39', flag: '🇮🇹', name: 'Italy' },
+            { value: '81', flag: '🇯🇵', name: 'Japan' },
+            { value: '60', flag: '🇲🇾', name: 'Malaysia' },
+            { value: '95', flag: '🇲🇲', name: 'Myanmar' },
+            { value: '977', flag: '🇳🇵', name: 'Nepal' },
+            { value: '31', flag: '🇳🇱', name: 'Netherlands' },
+            { value: '234', flag: '🇳🇬', name: 'Nigeria' },
+            { value: '47', flag: '🇳🇴', name: 'Norway' },
+            { value: '92', flag: '🇵🇰', name: 'Pakistan' },
+            { value: '63', flag: '🇵🇭', name: 'Philippines' },
+            { value: '974', flag: '🇶🇦', name: 'Qatar' },
+            { value: '7', flag: '🇷🇺', name: 'Russia' },
+            { value: '966', flag: '🇸🇦', name: 'Saudi Arabia' },
+            { value: '65', flag: '🇸🇬', name: 'Singapore' },
+            { value: '82', flag: '🇰🇷', name: 'South Korea' },
+            { value: '94', flag: '🇱🇰', name: 'Sri Lanka' },
+            { value: '66', flag: '🇹🇭', name: 'Thailand' },
+            { value: '34', flag: '🇪🇸', name: 'Spain' },
+            { value: '90', flag: '🇹🇷', name: 'Turkey' },
+            { value: '971', flag: '🇦🇪', name: 'United Arab Emirates' },
+            { value: '44', flag: '🇬🇧', name: 'United Kingdom' },
+            { value: '1', flag: '🇺🇸', name: 'United States / Canada' },
+            { value: '58', flag: '🇻🇪', name: 'Venezuela' },
+            { value: '84', flag: '🇻🇳', name: 'Vietnam' }
+        ];
+
+        // Urutkan alfabetis berdasarkan nama negara
+        countries.sort((a, b) => a.name.localeCompare(b.name));
+
+        const dropdown = document.getElementById('countryDropdown');
+        const trigger = dropdown.querySelector('.dropdown-trigger');
+        const triggerText = document.getElementById('triggerText');
+        const hiddenInput = document.getElementById('selectedCountryCode');
+        const menu = document.getElementById('countryMenu');
+
+        // Kosongkan menu dulu
+        menu.innerHTML = '';
+
+        // Populate dropdown
+        countries.forEach(country => {
+            const item = document.createElement('div');
+            item.className = 'dropdown-item';
+            if (country.value === '62') item.classList.add('selected');
+            item.setAttribute('data-value', country.value);
+            item.innerHTML = `${country.flag} +${country.value} ${country.name}`;
+            menu.appendChild(item);
+        });
+
+        const items = menu.querySelectorAll('.dropdown-item');
+
+        // Open/close dropdown
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('active');
+        });
+
+        // Handle selection
+        items.forEach(item => {
+            item.addEventListener('click', () => {
+                items.forEach(i => i.classList.remove('selected'));
+                item.classList.add('selected');
+                hiddenInput.value = item.getAttribute('data-value');
+                triggerText.innerHTML = item.innerHTML;
+                dropdown.classList.remove('active');
+            });
+        });
+
+        // Close when clicking outside
+        window.addEventListener('click', () => {
+            dropdown.classList.remove('active');
+        });
+
+        // Set default trigger text ke Indonesia
+        const defaultItem = menu.querySelector('.dropdown-item.selected');
+        if (defaultItem) {
+            triggerText.innerHTML = defaultItem.innerHTML;
+        } else {
+            triggerText.innerHTML = '🇮🇩 +62 Indonesia';
+        }
+    }
+
+    // Guide Modal Functions  
+    function openGuideModal() {  
+        const modal = document.getElementById('guideModal');  
+        modal.classList.add('active');  
+    }  
+
+    function closeGuideModal() {  
+        const modal = document.getElementById('guideModal');  
+        modal.classList.remove('active');  
+    }  
+
+    // Real-time events untuk pairing code  
+    function initEventStream() {  
+        if (eventSource) {  
+            eventSource.close();  
+        }  
+          
+        eventSource = new EventSource('/api/events');  
+          
+        eventSource.onmessage = function(event) {  
+            try {  
+                const data = JSON.parse(event.data);  
+                console.log('Received event:', data);  
+                  
+                switch(data.type) {  
+                    case 'status':  
+                        showNotification(`${data.number}: ${data.message}`, 'info');  
+                        updateSenderStatus(data.number, data.status);  
+                        break;  
+                          
+                    case 'pairing_code':  
+                        showPairingCodeModal(data);  
+                        updateSenderStatus(data.number, data.status);  
+                        break;  
+                          
+                    case 'success':  
+                        showNotification(`✓ ${data.message}`, 'success');  
+                        updateSenderStatus(data.number, data.status);  
+                        loadUserSenders();  
+                        break;  
+                          
+                    case 'error':  
+                        showNotification(`✗ ${data.message}`, 'error');  
+                        updateSenderStatus(data.number, data.status);  
+                        break;  
+                          
+                    case 'connected':  
+                        showNotification(`✅ ${data.message}`, 'success');  
+                        updateSenderStatus(data.number, 'connected');  
+                        loadUserSenders();  
+                        break;  
+                          
+                    case 'qr':  
+                        showNotification(`📱 ${data.message}`, 'info');  
+                        updateSenderStatus(data.number, 'waiting_qr');  
+                        break;  
+                }  
+            } catch (e) {  
+                console.error('Error parsing event data:', e);  
+            }  
+        };  
+          
+        eventSource.onerror = function(err) {  
+            console.error('EventSource error:', err);  
+            setTimeout(initEventStream, 5000);  
+        };  
+    }  
+
+    // Function untuk menampilkan modal pairing code  
+    function showPairingCodeModal(data) {  
+        const modal = document.getElementById('pairingModal');  
+        const codeValue = document.getElementById('pairingCodeValue');  
+        const displayCode = document.getElementById('displayCode');  
+          
+        currentPairingCode = data.code;  
+        const formattedCode = data.code || '--- ---';  
+        
+        codeValue.textContent = formattedCode;  
+        displayCode.textContent = formattedCode;  
+          
+        modal.classList.add('active');  
+    }  
+
+    // Function untuk menutup modal pairing code  
+    function closePairingModal() {  
+        const modal = document.getElementById('pairingModal');  
+        modal.classList.remove('active');  
+        currentPairingCode = null;  
+    }  
+
+    // Fallback copy function untuk browser lama atau HTTP
+    function fallbackCopyText(text) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        
+        textArea.focus();
+        textArea.select();
+        
+        try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (err) {
+            console.error('Fallback copy error:', err);
+            return false;
+        } finally {
+            document.body.removeChild(textArea);
+        }
+    }
+
+    // Function untuk menampilkan sukses copy
+    function showCopySuccess() {
+        const copyBtn = document.getElementById('copyCodeBtn');
+        const originalHTML = copyBtn.innerHTML;
+        
+        copyBtn.innerHTML = '<i class="fas fa-check"></i> COPIED!';
+        copyBtn.classList.add('copied');
+        
+        showNotification('Pairing code copied to clipboard!', 'success');
+        
+        setTimeout(() => {
+            copyBtn.innerHTML = originalHTML;
+            copyBtn.classList.remove('copied');
+        }, 2000);
+    }
+
+    // Function untuk menyalin kode pairing
+    function copyPairingCode() {
+        if (!currentPairingCode) {
+            showNotification('No code to copy!', 'error');
+            return;
+        }
+        
+        const textToCopy = currentPairingCode.replace(/-/g, '');
+        
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    showCopySuccess();
+                })
+                .catch(err => {
+                    console.error('Clipboard API error:', err);
+                    const fallbackSuccess = fallbackCopyText(textToCopy);
+                    if (fallbackSuccess) {
+                        showCopySuccess();
+                    } else {
+                        showNotification('Failed to copy code!', 'error');
+                    }
+                });
+        } else {
+            const fallbackSuccess = fallbackCopyText(textToCopy);
+            if (fallbackSuccess) {
+                showCopySuccess();
+            } else {
+                showNotification('Browser does not support auto copy', 'error');
+            }
+        }
+    }
+
+    // Function untuk update status sender di list  
+    function updateSenderStatus(number, status) {  
+        const sendersList = document.getElementById('sendersList');  
+        const senderItem = sendersList.querySelector(`[data-number="${number}"]`);  
+          
+        const statusMap = {  
+            'connected': 'connected',  
+            'connecting': 'connecting',  
+            'waiting_pairing': 'waiting_pairing',  
+            'waiting_qr': 'connecting',  
+            'requesting_code': 'connecting',  
+            'reconnecting': 'connecting',  
+            'disconnected': 'disconnected',  
+            'error': 'error',  
+            'failed': 'error',  
+            'timeout': 'error',  
+            'logged_out': 'disconnected'  
+        };  
+        const statusClass = statusMap[status] || 'disconnected';  
+
+        if (senderItem) {  
+            const statusEl = senderItem.querySelector('.sender-status');  
+            if (statusEl) {  
+                statusEl.className = 'sender-status ' + statusClass;  
+            }  
+        } else {  
+            loadUserSenders();  
+        }  
+    }  
+
+    // Load user senders  
+    async function loadUserSenders() {  
+        const sendersList = document.getElementById('sendersList');  
+          
+        sendersList.innerHTML = '<div class="loading-text"><i class="fas fa-spinner fa-spin"></i> Loading senders...</div>';  
+          
+        try {  
+            const response = await fetch('/api/my-senders');  
+            const data = await response.json();  
+              
+            if (!data.success || !data.senders || data.senders.length === 0) {  
+                sendersList.innerHTML = '<div class="no-senders"><i class="fas fa-exclamation-circle"></i> No senders found. Add your first sender!</div>';  
+                return;  
+            }  
+              
+            let html = '';  
+            data.senders.forEach(sender => {  
+                const statusClass = 'connected';  
+                html += `  
+                    <div class="sender-item" data-number="${sender}">  
+                        <div class="sender-info">  
+                            <div class="sender-status ${statusClass}"></div>  
+                            <span class="sender-number">+${sender}</span>  
+                        </div>  
+                        <button class="btn-delete" onclick="openDeleteModal('${sender}')">  
+                            <i class="fas fa-trash"></i>  
+                        </button>  
+                    </div>  
+                `;  
+            });  
+              
+            sendersList.innerHTML = html;  
+        } catch (error) {  
+            console.error('Error loading senders:', error);  
+            sendersList.innerHTML = '<div class="no-senders"><i class="fas fa-exclamation-circle"></i> Failed to load senders.</div>';  
+        }  
+    }  
+
+    // Add sender function  
+    async function addSender() {  
+        const countryCode = document.getElementById('selectedCountryCode').value;  
+        let number = document.getElementById('newSenderNumber').value.trim();  
+          
+        if (!countryCode) {  
+            showNotification('Select country code first!', 'error');  
+            return;  
+        }  
+          
+        if (!number) {  
+            showNotification('Enter phone number!', 'error');  
+            return;  
+        }  
+          
+        number = number.replace(/\D/g, '');  
+          
+        if (number.length < 6) {  
+            showNotification('Number too short!', 'error');  
+            return;  
+        }  
+          
+        const fullNumber = countryCode + number;  
+          
+        const addBtn = document.getElementById('addSenderBtn');  
+        const originalText = addBtn.innerHTML;  
+          
+        addBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSING...';  
+        addBtn.disabled = true;  
+          
+        try {  
+            const response = await fetch('/api/add-sender', {  
+                method: 'POST',  
+                headers: {  
+                    'Content-Type': 'application/json',  
+                },  
+                body: JSON.stringify({ number: fullNumber })  
+            });  
+              
+            const data = await response.json();  
+              
+            if (data.success) {  
+                showNotification(data.message || '✓ Connection started!', 'success');  
+                document.getElementById('newSenderNumber').value = '';  
+                  
+                const sendersList = document.getElementById('sendersList');  
+                const newItem = `  
+                    <div class="sender-item" data-number="${fullNumber}">  
+                        <div class="sender-info">  
+                            <div class="sender-status connecting"></div>  
+                            <span class="sender-number">+${fullNumber}</span>  
+                        </div>  
+                        <button class="btn-delete" onclick="openDeleteModal('${fullNumber}')">  
+                            <i class="fas fa-trash"></i>  
+                        </button>  
+                    </div>  
+                `;  
+                  
+                if (sendersList.querySelector('.no-senders')) {  
+                    sendersList.innerHTML = newItem;  
+                } else {  
+                    sendersList.insertAdjacentHTML('afterbegin', newItem);  
+                }  
+            } else {  
+                showNotification(data.error || 'Failed to add sender', 'error');  
+            }  
+        } catch (error) {  
+            console.error('Error:', error);  
+            showNotification('Server error', 'error');  
+        } finally {  
+            addBtn.innerHTML = originalText;  
+            addBtn.disabled = false;  
+        }  
+    }  
+
+    // Open delete modal  
+    function openDeleteModal(number) {  
+        numberToDelete = number;  
+        const deleteMessage = document.getElementById('deleteMessage');  
+        deleteMessage.innerHTML = `Are you sure you want to delete sender <b style="color:#fff;">+${number}</b>? This will disconnect WhatsApp.`;  
+          
+        const modal = document.getElementById('deleteModal');  
+        modal.classList.add('active');  
+    }  
+
+    // Close delete modal  
+    function closeDeleteModal() {  
+        const modal = document.getElementById('deleteModal');  
+        modal.classList.remove('active');  
+        numberToDelete = null;  
+    }  
+
+    // Delete sender function  
+    async function deleteSender() {  
+        if (!numberToDelete) return;  
+          
+        const deleteBtn = document.getElementById('btnConfirmDelete');  
+        const originalText = deleteBtn.innerHTML;  
+          
+        deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> DELETING...';  
+        deleteBtn.disabled = true;  
+          
+        try {  
+            const response = await fetch('/api/delete-sender', {  
+                method: 'POST',  
+                headers: {  
+                    'Content-Type': 'application/json',  
+                },  
+                body: JSON.stringify({ number: numberToDelete })  
+            });  
+              
+            const data = await response.json();  
+              
+            if (data.success) {  
+                showNotification(data.message || '✓ Sender deleted!', 'success');  
+                  
+                const senderItem = document.querySelector(`.sender-item[data-number="${numberToDelete}"]`);  
+                if (senderItem) {  
+                    senderItem.remove();  
+                }  
+                  
+                const sendersList = document.getElementById('sendersList');  
+                if (sendersList.children.length === 0) {  
+                    sendersList.innerHTML = '<div class="no-senders"><i class="fas fa-exclamation-circle"></i> No senders found. Add your first sender!</div>';  
+                }  
+            } else {  
+                showNotification(data.error || 'Failed to delete sender', 'error');  
+            }  
+        } catch (error) {  
+            console.error('Error:', error);  
+            showNotification('Server error', 'error');  
+        } finally {  
+            deleteBtn.innerHTML = originalText;  
+            deleteBtn.disabled = false;  
+            closeDeleteModal();  
+        }  
+    }  
+
+    // Initialize when page loads  
+    document.addEventListener('DOMContentLoaded', function() {  
+        initCountryDropdown();  
+        initEventStream();  
+        loadUserSenders();  
+          
+        document.getElementById('addSenderBtn').addEventListener('click', addSender);  
+        document.getElementById('newSenderNumber').addEventListener('keypress', function(e) {  
+            if (e.key === 'Enter') {  
+                addSender();  
+            }  
+        });  
+          
+        document.getElementById('copyCodeBtn').addEventListener('click', copyPairingCode);  
+        document.getElementById('closeModalBtn').addEventListener('click', closePairingModal);  
+        document.getElementById('btnConfirmDelete').addEventListener('click', deleteSender);  
+          
+        document.querySelectorAll('.modal-overlay').forEach(modal => {  
+            modal.addEventListener('click', function(e) {  
+                if (e.target === this) {  
+                    if (modal.id === 'pairingModal') {  
+                        closePairingModal();  
+                    } else if (modal.id === 'deleteModal') {  
+                        closeDeleteModal();  
+                    } else if (modal.id === 'guideModal') {  
+                        closeGuideModal();  
+                    }  
+                }  
+            });  
+        });  
+          
+        document.querySelector('.guide-banner').addEventListener('click', openGuideModal);  
+    });  
+</script>
+</body>
+</html>

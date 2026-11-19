@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>User Management - Core</title>
+    
+    <!-- Load Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- VARIABLES (TEMA BIRU) --- */
+        :root {
+            /* Background */
+            --bg-dark: #000000; /* Background hitam polos */
+            
+            /* Warna Biru Dominan */
+            --accent-blue: #3b82f6;
+            --accent-blue-light: #60a5fa;
+            --accent-blue-dark: #1d4ed8;
+            
+            /* Card & UI */
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --card-border: rgba(59, 130, 246, 0.2);
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            
+            /* Status Colors */
+            --status-active: #10b981;
+            --status-expired: #ef4444;
+            --status-warning: #f59e0b;
+            
+            /* Role Colors */
+            --role-owner: #ef4444;
+            --role-admin: #8b5cf6;
+            --role-user: #10b981;
+            
+            /* Text Colors */
+            --text-white: #ffffff;
+            --text-gray: #d1d5db;
+            --text-light: #f3f4f6;
+            
+            /* Fonts */
+            --font-title: 'Orbitron', sans-serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            outline: none; 
+        }
+        
+        body {
+            background-color: var(--bg-dark); /* Background hitam polos */
+            color: var(--text-white);
+            font-family: var(--font-body);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- HEADER --- */
+        header {
+            display: flex; 
+            align-items: center; 
+            padding: 20px 25px; 
+            padding-top: 30px; 
+            background: rgba(0, 0, 0, 0.8);
+            border-bottom: 1px solid var(--card-border);
+            position: sticky; 
+            top: 0;
+            backdrop-filter: blur(10px);
+            z-index: 50;
+        }
+
+        /* Dashboard Button Style */
+        .btn-dashboard {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            color: var(--accent-blue-light);
+            font-family: var(--font-title);
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn-dashboard:hover {
+            background: rgba(59, 130, 246, 0.2);
+            transform: translateX(-3px);
+        }
+
+        .brand-title { 
+            font-family: var(--font-title); 
+            font-size: 16px; 
+            font-weight: 600; 
+            color: var(--text-white);
+            background: linear-gradient(90deg, var(--accent-blue-light), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+            
+            /* Centering logic */
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            z-index: 1;
+        }
+
+        /* --- MAIN CONTENT --- */
+        main { 
+            flex: 1; 
+            padding: 20px; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            width: 100%; 
+        }
+
+        .page-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 20px; 
+        }
+        
+        .page-title {
+            font-family: var(--font-title); 
+            font-size: 18px; 
+            font-weight: 600; 
+            color: var(--text-white);
+            border-left: 3px solid var(--accent-blue); 
+            padding-left: 12px;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-dark));
+            color: white; 
+            border: none; 
+            padding: 8px 16px; 
+            border-radius: 8px;
+            font-family: var(--font-title); 
+            font-size: 11px; 
+            font-weight: 600; 
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex; 
+            align-items: center; 
+            gap: 6px;
+        }
+        
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        /* --- CARD STYLES --- */
+        .card {
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            padding: 20px;
+            border: 1px solid var(--card-border); 
+            box-shadow: var(--card-shadow);
+            margin-top: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .table-responsive { 
+            overflow-x: auto; 
+            border-radius: 12px;
+        }
+        
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+        }
+        
+        thead th {
+            font-family: var(--font-title); 
+            font-size: 11px; 
+            color: var(--text-gray);
+            text-transform: uppercase; 
+            padding: 12px 15px; 
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+        }
+        
+        tbody td {
+            padding: 12px 15px; 
+            font-size: 12px; 
+            color: var(--text-white);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            white-space: nowrap;
+        }
+        
+        tbody tr:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
+        
+        /* Badge Styles */
+        .badge { 
+            padding: 4px 8px; 
+            border-radius: 6px; 
+            font-size: 10px; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            display: inline-block;
+        }
+        
+        .badge-owner { 
+            background: rgba(239, 68, 68, 0.15); 
+            color: var(--role-owner); 
+            border: 1px solid rgba(239, 68, 68, 0.3); 
+        }
+        
+        .badge-admin { 
+            background: rgba(139, 92, 246, 0.15); 
+            color: var(--role-admin); 
+            border: 1px solid rgba(139, 92, 246, 0.3); 
+        }
+        
+        .badge-user { 
+            background: rgba(16, 185, 129, 0.15); 
+            color: var(--role-user); 
+            border: 1px solid rgba(16, 185, 129, 0.3); 
+        }
+        
+        .key-code { 
+            background: rgba(0, 0, 0, 0.3); 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            color: var(--status-warning); 
+            border: 1px solid rgba(245, 158, 11, 0.3); 
+            font-size: 10px; 
+            font-family: var(--font-title);
+            letter-spacing: 1px;
+        }
+
+        /* Action Buttons */
+        .action-btn-group { 
+            display: flex; 
+            gap: 6px; 
+            justify-content: flex-end;
+        }
+        
+        .btn-icon {
+            width: 28px; 
+            height: 28px; 
+            border-radius: 6px; 
+            border: none; 
+            cursor: pointer;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transition: all 0.2s;
+        }
+        
+        .btn-edit { 
+            background: rgba(59, 130, 246, 0.1); 
+            color: var(--accent-blue); 
+            border: 1px solid rgba(59, 130, 246, 0.3); 
+        }
+        
+        .btn-edit:hover { 
+            background: rgba(59, 130, 246, 0.2); 
+        }
+        
+        .btn-delete { 
+            background: rgba(239, 68, 68, 0.1); 
+            color: var(--status-expired); 
+            border: 1px solid rgba(239, 68, 68, 0.3); 
+        }
+        
+        .btn-delete:hover { 
+            background: rgba(239, 68, 68, 0.2); 
+        }
+
+        /* --- MODAL STYLES --- */
+        .modal {
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85); 
+            backdrop-filter: blur(10px); 
+            z-index: 1000;
+            justify-content: center; 
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid var(--card-border); 
+            border-radius: 16px;
+            width: 100%; 
+            max-width: 400px; 
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5); 
+            backdrop-filter: blur(20px);
+        }
+        
+        .modal-header {
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            margin-bottom: 20px; 
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal-title { 
+            font-family: var(--font-title); 
+            font-size: 16px; 
+            color: var(--text-white); 
+            letter-spacing: 0.5px;
+        }
+        
+        .close-modal { 
+            background: none; 
+            border: none; 
+            color: var(--accent-blue); 
+            font-size: 20px; 
+            cursor: pointer; 
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: 0.3s;
+        }
+        
+        .close-modal:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-group { 
+            margin-bottom: 15px; 
+        }
+        
+        .form-group label { 
+            display: block; 
+            color: var(--accent-blue-light); 
+            font-size: 11px; 
+            margin-bottom: 6px; 
+            letter-spacing: 0.5px; 
+            font-family: var(--font-title);
+        }
+        
+        input, select {
+            width: 100%; 
+            padding: 10px; 
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--card-border); 
+            border-radius: 8px;
+            color: var(--text-white); 
+            font-family: var(--font-body); 
+            font-size: 12px;
+            transition: 0.3s;
+        }
+        
+        input:focus, select:focus { 
+            border-color: var(--accent-blue); 
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+        
+        .modal-footer { 
+            display: flex; 
+            gap: 10px; 
+            justify-content: flex-end; 
+            margin-top: 20px; 
+        }
+        
+        .btn-cancel { 
+            background: rgba(255, 255, 255, 0.05); 
+            border: 1px solid var(--card-border); 
+            color: var(--text-gray); 
+            padding: 8px 16px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-family: var(--font-title); 
+            font-size: 11px; 
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        
+        .btn-cancel:hover { 
+            background: rgba(255, 255, 255, 0.1); 
+        }
+        
+        .btn-save { 
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-dark)); 
+            border: none; 
+            color: white; 
+            padding: 8px 20px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-family: var(--font-title); 
+            font-size: 11px; 
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        
+        .btn-save:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        /* --- NOTIFICATION TOAST --- */
+        #notification-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            width: 90%;
+            max-width: 400px;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideDown 0.4s ease;
+            pointer-events: auto;
+            border: 1px solid transparent;
+            font-family: var(--font-body);
+            font-size: 12px;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-success { 
+            border-color: var(--status-active); 
+            color: var(--status-active); 
+        }
+        
+        .toast-error { 
+            border-color: var(--status-expired); 
+            color: var(--status-expired); 
+        }
+
+        .toast i { 
+            font-size: 16px; 
+        }
+
+        @keyframes slideDown {
+            from { 
+                transform: translateY(-40px); 
+                opacity: 0; 
+            }
+            to { 
+                transform: translateY(0); 
+                opacity: 1; 
+            }
+        }
+
+        @keyframes fadeOut {
+            to { 
+                transform: translateY(-20px); 
+                opacity: 0; 
+            }
+        }
+
+        /* Loading State */
+        .loading-state {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-gray);
+            font-size: 12px;
+        }
+
+        .loading-state i {
+            margin-bottom: 10px;
+            color: var(--accent-blue);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-gray);
+        }
+
+        .empty-state i {
+            font-size: 32px;
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+                padding-top: 25px;
+            }
+            
+            .brand-title {
+                font-size: 14px;
+            }
+            
+            .page-title {
+                font-size: 16px;
+            }
+            
+            main {
+                padding: 15px;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+            
+            thead th, tbody td {
+                padding: 10px 12px;
+                font-size: 11px;
+            }
+            
+            .modal-content {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            
+            .btn-add {
+                align-self: flex-end;
+            }
+            
+            .action-btn-group {
+                flex-direction: column;
+                gap: 4px;
+            }
+            
+            .btn-icon {
+                width: 100%;
+                height: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- NOTIFICATION CONTAINER -->
+    <div id="notification-container"></div>
+
+    <!-- HEADER -->
+    <header>
+        <a href="/dashboard" class="btn-dashboard">
+            <i class="fas fa-chevron-left"></i>BACK
+        </a>
+        <div class="brand-title">USER MANAGER</div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main>
+        <div class="page-header">
+            <h2 class="page-title">USER DATABASE</h2>
+            <button class="btn-add" id="addUserBtn" style="display: none;">
+                <i class="fas fa-plus"></i> NEW USER
+            </button>
+        </div>
+
+        <!-- USER TABLE -->
+        <div class="card">
+            <div class="table-responsive">
+                <table id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Key</th>
+                            <th>Status</th>
+                            <th>Expiry</th>
+                            <th style="text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr>
+                            <td colspan="6" class="loading-state">
+                                <i class="fas fa-spinner fa-spin"></i><br>
+                                Loading data...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL FORM -->
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Add User</h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <form id="userForm">
+                <div class="form-group">
+                    <label for="usernameInput">Username</label>
+                    <input type="text" id="usernameInput" required placeholder="Enter username..." autocomplete="off">
+                </div>
+                
+                <div class="form-group">
+                    <label for="roleSelect">Access Level</label>
+                    <select id="roleSelect" required>
+                        <option value="user">USER</option>
+                        <option value="admin">ADMIN</option>
+                        <option value="owner">OWNER</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="keyInput">Security Key</label>
+                    <input type="text" id="keyInput" placeholder="Leave empty for auto-generate">
+                </div>
+                
+                <div class="form-group">
+                    <label for="durationSelect">Duration</label>
+                    <select id="durationSelect">
+                        <option value="7d">7 Days</option>
+                        <option value="30d" selected>30 Days</option>
+                        <option value="90d">90 Days</option>
+                        <option value="365d">1 Year</option>
+                        <option value="permanent">Lifetime</option>
+                    </select>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" id="cancelBtn">CANCEL</button>
+                    <button type="submit" class="btn-save" id="submitBtn">SAVE</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // --- USER LOGIC ---
+        let currentUserRole = '';
+        let currentUsername = '';
+        let editingUser = null;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserData();
+            loadUsers();
+            
+            document.getElementById('addUserBtn').addEventListener('click', openAddModal);
+            document.getElementById('closeModal').addEventListener('click', closeModal);
+            document.getElementById('cancelBtn').addEventListener('click', closeModal);
+            document.getElementById('userForm').addEventListener('submit', handleFormSubmit);
+            document.getElementById('userModal').addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+        });
+        
+        function loadUserData() {
+            fetch('/api/option-data')
+                .then(res => res.json())
+                .then(data => {
+                    currentUsername = data.username;
+                    currentUserRole = data.role;
+                    
+                    const addBtn = document.getElementById('addUserBtn');
+                    if (data.role === 'owner' || data.role === 'admin') {
+                        addBtn.style.display = 'flex';
+                    } else {
+                        addBtn.style.display = 'none';
+                    }
+                })
+                .catch(err => {
+                    console.error('Error loading user data:', err);
+                    showToast('Error loading user data', 'error');
+                });
+        }
+        
+        function loadUsers() {
+            fetch('/api/users')
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.success) {
+                        showToast(data.error || 'Failed to load users', 'error');
+                        return;
+                    }
+                    
+                    const tbody = document.getElementById('usersTableBody');
+                    tbody.innerHTML = '';
+                    
+                    if (data.users && data.users.length > 0) {
+                        data.users.forEach(user => {
+                            const row = tbody.insertRow();
+                            const expiredDate = new Date(user.expired);
+                            const now = new Date();
+                            const isExpired = expiredDate < now;
+                            const dateStr = expiredDate.toLocaleDateString();
+                            
+                            let actionsHTML = '';
+                            if (user.role === 'owner') {
+                                actionsHTML = `<span style="color:var(--text-gray); font-size:10px;"><i class="fas fa-lock"></i> Protected</span>`;
+                            } else {
+                                const canEdit = canEditUser(user);
+                                const canDelete = canDeleteUser(user);
+                                actionsHTML = `<div class="action-btn-group">`;
+                                if(canEdit) actionsHTML += `<button class="btn-icon btn-edit" onclick="editUser('${user.username}')"><i class="fas fa-edit"></i></button>`;
+                                if(canDelete) actionsHTML += `<button class="btn-icon btn-delete" onclick="deleteUser('${user.username}')"><i class="fas fa-trash"></i></button>`;
+                                actionsHTML += `</div>`;
+                            }
+                            
+                            row.innerHTML = `
+                                <td><span style="color:var(--text-white); font-weight:600;">${user.username}</span></td>
+                                <td><span class="badge badge-${user.role}">${user.role}</span></td>
+                                <td><span class="key-code">${user.key}</span></td>
+                                <td>${isExpired ? 
+                                    '<span style="color:var(--status-expired); font-weight:600;">Expired</span>' : 
+                                    '<span style="color:var(--status-active); font-weight:600;">Active</span>'}</td>
+                                <td style="color:var(--text-gray); font-size:11px;">${dateStr}</td>
+                                <td style="text-align: right;">${actionsHTML}</td>
+                            `;
+                        });
+                    } else {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="6" class="empty-state">
+                                    <i class="fas fa-users"></i><br>
+                                    No users found
+                                </td>
+                            </tr>`;
+                    }
+                })
+                .catch(err => {
+                    console.error('Error loading users:', err);
+                    showToast('Error loading users', 'error');
+                });
+        }
+        
+        function canEditUser(user) {
+            if (currentUserRole === 'owner') return user.role !== 'owner';
+            else if (currentUserRole === 'admin') return user.role === 'user';
+            return false;
+        }
+        
+        function canDeleteUser(user) { 
+            return canEditUser(user); 
+        }
+        
+        function openAddModal() {
+            editingUser = null;
+            document.getElementById('modalTitle').textContent = 'NEW USER';
+            document.getElementById('submitBtn').textContent = 'CREATE';
+            document.getElementById('usernameInput').value = '';
+            document.getElementById('usernameInput').readOnly = false;
+            document.getElementById('keyInput').value = '';
+            document.getElementById('durationSelect').value = '30d';
+            
+            const roleSelect = document.getElementById('roleSelect');
+            if (currentUserRole === 'owner') {
+                roleSelect.innerHTML = `<option value="user">USER</option><option value="admin">ADMIN</option>`;
+                roleSelect.value = 'user';
+            } else if (currentUserRole === 'admin') {
+                roleSelect.innerHTML = '<option value="user">USER</option>';
+                roleSelect.value = 'user';
+            }
+            document.getElementById('userModal').style.display = 'flex';
+        }
+        
+        function editUser(username) {
+            fetch(`/api/user/${username}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.success) {
+                        showToast(data.error || 'Cannot edit this user', 'error');
+                        return;
+                    }
+                    const user = data.user;
+                    if (user.role === 'owner') { 
+                        showToast('Cannot edit Owner', 'error'); 
+                        return; 
+                    }
+                    if (currentUserRole === 'admin' && user.role !== 'user') { 
+                        showToast('Admin can only edit users', 'error'); 
+                        return; 
+                    }
+                    
+                    editingUser = user;
+                    document.getElementById('modalTitle').textContent = 'EDIT USER';
+                    document.getElementById('submitBtn').textContent = 'UPDATE';
+                    document.getElementById('usernameInput').value = user.username;
+                    document.getElementById('usernameInput').readOnly = true;
+                    document.getElementById('keyInput').value = user.key === '********' ? '' : user.key;
+                    document.getElementById('roleSelect').value = user.role;
+                    
+                    if (currentUserRole === 'admin') {
+                        document.getElementById('roleSelect').disabled = true;
+                    } else {
+                        document.getElementById('roleSelect').disabled = false;
+                    }
+                    
+                    const expired = new Date(user.expired);
+                    const now = new Date();
+                    const diffDays = Math.ceil((expired - now) / (1000 * 60 * 60 * 24));
+                    if (diffDays > 3650) document.getElementById('durationSelect').value = 'permanent';
+                    else if (diffDays > 180) document.getElementById('durationSelect').value = '365d';
+                    else if (diffDays > 45) document.getElementById('durationSelect').value = '90d';
+                    else if (diffDays > 15) document.getElementById('durationSelect').value = '30d';
+                    else document.getElementById('durationSelect').value = '7d';
+                    
+                    document.getElementById('userModal').style.display = 'flex';
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    showToast('Error loading user data', 'error');
+                });
+        }
+        
+        function closeModal() {
+            document.getElementById('userModal').style.display = 'none';
+            editingUser = null;
+        }
+        
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const username = document.getElementById('usernameInput').value.trim();
+            const role = document.getElementById('roleSelect').value;
+            const key = document.getElementById('keyInput').value.trim();
+            const duration = document.getElementById('durationSelect').value;
+            
+            if (!username) { 
+                showToast('Username is required', 'error'); 
+                return; 
+            }
+            if (key && key.length < 4) { 
+                showToast('Key must be at least 4 characters', 'error'); 
+                return; 
+            }
+            
+            const userData = { username, role, duration };
+            if (key) userData.key = key;
+            
+            const url = editingUser ? `/api/user/${editingUser.username}` : '/api/user';
+            const method = editingUser ? 'PUT' : 'POST';
+            
+            fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userData)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    closeModal();
+                    loadUsers();
+                } else {
+                    showToast(data.error || 'Operation failed', 'error');
+                }
+            })
+            .catch(err => {
+                console.error('Error saving user:', err);
+                showToast('Error saving user', 'error');
+            });
+        }
+        
+        function deleteUser(username) {
+            if (!confirm(`Are you sure you want to delete user "${username}"?`)) return;
+            
+            fetch(`/api/user/${username}`, { method: 'DELETE' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadUsers();
+                } else {
+                    showToast(data.error || 'Delete failed', 'error');
+                }
+            })
+            .catch(err => {
+                console.error('Error deleting user:', err);
+                showToast('Error deleting user', 'error');
+            });
+        }
+        
+        // --- TOAST FUNCTION ---
+        function showToast(message, type) {
+            const container = document.getElementById('notification-container');
+            
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            const iconClass = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle';
+            
+            toast.innerHTML = `
+                <i class="fas ${iconClass}"></i>
+                <div class="toast-content">${message}</div>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'fadeOut 0.3s forwards';
+                setTimeout(() => {
+                    if(toast.parentNode) toast.parentNode.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
